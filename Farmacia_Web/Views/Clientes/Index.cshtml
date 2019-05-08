@@ -1,0 +1,41 @@
+﻿@model CLIENTE
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Clientes</h2>
+@using (Html.BeginForm("Guardar", "Clientes", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-sm-12">
+            @Html.ValidationSummary(false,"",new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(Model => Model.Nombre)
+                @Html.TextBoxFor(x => x.Nombre, new { @class="form-control" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(Model => Model.APaterno )
+                @Html.TextBoxFor(x => x.APaterno, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(Model => Model.AMaterno )
+                @Html.TextBoxFor(x => x.AMaterno, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(Model => Model.Telefono )
+                @Html.TextBoxFor(x => x.Telefono, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(Model => Model.Direccion )
+                @Html.TextBoxFor(x => x.Direccion, new { @class = "form-control" })
+            </div>
+            <button type="submit" class="btn btn-default">Guardar</button>
+        </div>
+    </div>
+
+}
+

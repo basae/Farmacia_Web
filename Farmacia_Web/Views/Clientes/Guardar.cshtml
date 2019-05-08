@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Farmacia_Web.CLIENTE>
+
+@{
+    ViewBag.Title = "Guardar";
+}
+
+<h2>Guardar</h2>
+
+<p>
+    @Html.ActionLink("Nuevo Cliente", "Guardar")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.APaterno)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AMaterno)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Telefono)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Direccion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fecha_Creacion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fecha_Modificacion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Estatus)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.APaterno)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AMaterno)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Telefono)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Direccion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fecha_Creacion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fecha_Modificacion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Estatus)
+        </td>
+        <td>
+            @Html.ActionLink("Editar", "Modificar", new { id=item.Id }) |            
+            @Html.ActionLink("Eliminar", "Eliminar", new { ClienteId = item.Id })
+        </td>
+    </tr>
+}
+
+</table>
