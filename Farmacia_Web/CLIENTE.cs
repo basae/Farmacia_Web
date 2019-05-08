@@ -11,7 +11,8 @@ namespace Farmacia_Web
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class CLIENTE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,7 +22,9 @@ namespace Farmacia_Web
         }
     
         public int Id { get; set; }
+        [Required(ErrorMessage ="Nombre del cliente requerido.")]
         public string Nombre { get; set; }
+        [Required(ErrorMessage = "Apellido del cliente requerido.")]
         public string APaterno { get; set; }
         public string AMaterno { get; set; }
         public string Telefono { get; set; }

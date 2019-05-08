@@ -27,8 +27,17 @@ namespace Farmacia_Web.Controllers
             if (ModelState.IsValid)
             {
                 var Resultado = new ArticulosBussiness().Guardar(_articulo);
+                if (Resultado.Error)
+                {
+                    ModelState.AddModelError("Error", Resultado.Mensaje);
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
             }
-            return RedirectToAction("Index");
+            return View();
+
         }
         [HttpGet]
         public ActionResult Modificar(int id)
@@ -54,6 +63,12 @@ namespace Farmacia_Web.Controllers
         {
             var Resultado = new ArticulosBussiness().Eliminar(Id);
             return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public ActionResult Consulta(int Id)
+        {
+            var Artiruculo = new ArticulosBussiness().Consulta(Id);
+            return View(Artiruculo.Resultado);
         }
     }
 }

@@ -103,6 +103,7 @@ namespace Farmacia_Web.Core.Productos
                 using (var bd = new FarmaciaEntities())
                 {
 
+                    _item.Fecha_Modificacion = DateTime.Now;                    
                     bd.Entry(_item).State = System.Data.Entity.EntityState.Modified;
                     bd.SaveChanges();
                 }

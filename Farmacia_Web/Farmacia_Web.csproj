@@ -280,6 +280,7 @@
     <Content Include="Views\Articulos\Index.cshtml" />
     <Content Include="Views\Articulos\Guardar.cshtml" />
     <Content Include="Views\Articulos\Modificar.cshtml" />
+    <Content Include="Views\Articulos\Consulta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,18 +11,31 @@ namespace Farmacia_Web
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class ARTICULO
     {
         public int Id { get; set; }
+        [Required(ErrorMessage = "Descripción del producto requerida.")]
         public string Descripcion { get; set; }
+        [Required(ErrorMessage = "Precio del producto requerido.")]
         public Nullable<double> Precio { get; set; }
+        [Required(ErrorMessage = "Marca del producto requerida.")]
         public string Marca { get; set; }
+        [Required(ErrorMessage = "Unidad de Medida del producto requerida.")]
+        [Display(Name ="Unidad de Medida")]
         public string Unidad_Medida { get; set; }
+        [Required(ErrorMessage = "Existencia del producto requerido.")]        
         public Nullable<int> Existencia { get; set; }
+        [Required(ErrorMessage = "Precio unitario del producto requerido.")]
+        [Display(Name ="Precio Unitario")]
         public Nullable<double> Precio_Unitario { get; set; }
+        [Required(ErrorMessage = "Precio venta del producto requerido.")]
+        [Display(Name = "Precio Venta")]
         public Nullable<double> Precio_Venta { get; set; }
+        [Display(Name = "Fecha de Creación")]
         public Nullable<System.DateTime> Fecha_Creacion { get; set; }
+        [Display(Name = "Fecha de Modificación")]
         public Nullable<System.DateTime> Fecha_Modificacion { get; set; }
         public Nullable<bool> Estatus { get; set; }
     }
