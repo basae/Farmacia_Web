@@ -79,6 +79,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PEDIDO_DE__Id_Pe__47DBAE45">
+          <End Role="PEDIDO" Type="Self.PEDIDO" Multiplicity="0..1" />
+          <End Role="PEDIDO_DETALLE" Type="Self.PEDIDO_DETALLE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PEDIDO">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PEDIDO_DETALLE">
+              <PropertyRef Name="Id_Pedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="SP_SEL_CLIENTES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="FarmaciaModelStoreContainer">
           <EntitySet Name="ARTICULO" EntityType="Self.ARTICULO" Schema="dbo" store:Type="Tables" />
@@ -89,6 +101,10 @@
           <AssociationSet Name="FK__PEDIDO__Id_Clien__31EC6D26" Association="Self.FK__PEDIDO__Id_Clien__31EC6D26">
             <End Role="CLIENTE" EntitySet="CLIENTE" />
             <End Role="PEDIDO" EntitySet="PEDIDO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PEDIDO_DE__Id_Pe__47DBAE45" Association="Self.FK__PEDIDO_DE__Id_Pe__47DBAE45">
+            <End Role="PEDIDO" EntitySet="PEDIDO" />
+            <End Role="PEDIDO_DETALLE" EntitySet="PEDIDO_DETALLE" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -148,6 +164,7 @@
           <Property Name="Fecha_Modificacion" Type="DateTime" Precision="3" />
           <Property Name="Estatus" Type="Boolean" />
           <NavigationProperty Name="CLIENTE" Relationship="Self.FK__PEDIDO__Id_Clien__31EC6D26" FromRole="PEDIDO" ToRole="CLIENTE" />
+          <NavigationProperty Name="PEDIDO_DETALLE" Relationship="FarmaciaModel.FK__PEDIDO_DE__Id_Pe__47DBAE45" FromRole="PEDIDO" ToRole="PEDIDO_DETALLE" />
         </EntityType>
         <EntityType Name="PEDIDO_DETALLE">
           <Key>
@@ -158,6 +175,7 @@
           <Property Name="Id_Articulo" Type="Int32" />
           <Property Name="Cantidad" Type="Int32" />
           <Property Name="Monto" Type="Double" />
+          <NavigationProperty Name="PEDIDO" Relationship="FarmaciaModel.FK__PEDIDO_DE__Id_Pe__47DBAE45" FromRole="PEDIDO_DETALLE" ToRole="PEDIDO" />
         </EntityType>
         <Association Name="FK__PEDIDO__Id_Clien__31EC6D26">
           <End Role="CLIENTE" Type="Self.CLIENTE" Multiplicity="1" />
@@ -182,6 +200,10 @@
             <End Role="PEDIDO" EntitySet="PEDIDO" />
           </AssociationSet>
           <FunctionImport Name="SP_SEL_CLIENTES" ReturnType="Collection(FarmaciaModel.SP_SEL_CLIENTES_Result)" />
+          <AssociationSet Name="FK__PEDIDO_DE__Id_Pe__47DBAE45" Association="FarmaciaModel.FK__PEDIDO_DE__Id_Pe__47DBAE45">
+            <End Role="PEDIDO" EntitySet="PEDIDO" />
+            <End Role="PEDIDO_DETALLE" EntitySet="PEDIDO_DETALLE" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="SP_SEL_CLIENTES_Result">
           <Property Type="Int32" Name="Id" Nullable="false" />
@@ -194,6 +216,18 @@
           <Property Type="DateTime" Name="Fecha_Modificacion" Nullable="true" Precision="23" />
           <Property Type="Boolean" Name="Estatus" Nullable="true" />
         </ComplexType>
+        <Association Name="FK__PEDIDO_DE__Id_Pe__47DBAE45">
+          <End Type="FarmaciaModel.PEDIDO" Role="PEDIDO" Multiplicity="0..1" />
+          <End Type="FarmaciaModel.PEDIDO_DETALLE" Role="PEDIDO_DETALLE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PEDIDO">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PEDIDO_DETALLE">
+              <PropertyRef Name="Id_Pedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

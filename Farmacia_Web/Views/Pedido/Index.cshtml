@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Farmacia_Web.PEDIDO>
+
+@{
+    ViewBag.Title = "Pedidos";
+}
+
+<h2><span class="glyphicon glyphicon-transfer"></span> Pedidos</h2>
+
+<p>
+    @Html.ActionLink("Nuevo", "Create")
+</p>
+<table class="table table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Fecha_Pedido)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Id_Cliente)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Total)
+        </th>        
+        <th>
+            @Html.DisplayNameFor(model => model.Estatus)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fecha_Pedido)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => string.Join(" ", item.CLIENTE.Nombre, item.CLIENTE.APaterno))
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Total)
+        </td>        
+        <td>
+            @Html.DisplayFor(modelItem => item.Estatus)
+        </td>
+        <td>
+            @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Detalles", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Eliminar", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

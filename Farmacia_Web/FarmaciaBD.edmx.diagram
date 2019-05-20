@@ -11,6 +11,7 @@
         <EntityTypeShape EntityType="FarmaciaModel.PEDIDO" Width="1.5" PointX="4.125" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="FarmaciaModel.PEDIDO_DETALLE" Width="1.5" PointX="4.75" PointY="4.75" IsExpanded="true" />
         <AssociationConnector Association="FarmaciaModel.FK__PEDIDO__Id_Clien__31EC6D26" ManuallyRouted="false" />
+        <AssociationConnector Association="FarmaciaModel.FK__PEDIDO_DE__Id_Pe__47DBAE45" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
