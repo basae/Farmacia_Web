@@ -22,3 +22,7 @@ select,
 textarea {
     max-width: 280px;
 }
+#tbl_show_articulos a
+{
+    cursor:pointer;
+}

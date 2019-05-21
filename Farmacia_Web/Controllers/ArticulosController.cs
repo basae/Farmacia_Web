@@ -70,5 +70,17 @@ namespace Farmacia_Web.Controllers
             var Artiruculo = new ArticulosBussiness().Consulta(Id);
             return View(Artiruculo.Resultado);
         }
+        [HttpGet]
+        public JsonResult ConsultaArticulos()
+        {
+            var Articulos = new ArticulosBussiness().Consulta().Lista_Resultado;
+            return Json(Articulos, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public ActionResult ConsultaJson(int Id)
+        {
+            var Artiruculo = new ArticulosBussiness().Consulta(Id);
+            return Json(Artiruculo.Resultado, JsonRequestBehavior.AllowGet);
+        }
     }
 }

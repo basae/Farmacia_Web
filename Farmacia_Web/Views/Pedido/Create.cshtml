@@ -7,27 +7,40 @@
 <h2>Nuevo Pedido</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create", "Pedido", FormMethod.Post, new { @id = "form1" }))
 {
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.Total)
 
-    <div class="form-horizontal">
-        <h4><span class="glyphicon glyphicon-piggy-bank"></span> Nuevo pedido</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(x => x.Fecha_Pedido)
-            @Html.TextBoxFor(x => x.Fecha_Pedido, new { @class = "form-control", @Value = DateTime.Now.ToString("yyyy-MM-dd"), @type = "date" })
+    <h4><span class="glyphicon glyphicon-piggy-bank"></span> Nuevo pedido</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(x => x.Id_Cliente)
+        @Html.DropDownListFor(x => x.Id_Cliente, (IEnumerable<SelectListItem>)ViewBag.Clientes, "Selecciona un Cliente", new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-11 col-md-1">
+            <input type="submit" value="Terminar Pedido" class="btn btn-warning" />
         </div>
-        <div class="form-group">
-            @Html.LabelFor(x => x.Id_Cliente)
-            @Html.DropDownListFor(x => x.Id_Cliente, (IEnumerable<SelectListItem>)ViewBag.Clientes,"Selecciona un Cliente", new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <table class="table table-striped" id="tbl_pedido_lista">
+            <caption><h4><strong>Total:<span id="total_label">$ 0.00</span></strong></h4></caption>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Id</th>
+                    <th>Descripcion</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Monto</th>
+                    <th><button class="btn btn-success" id="addRow"><span class="glyphicon glyphicon-plus-sign"></span></button></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 }
 
@@ -37,4 +50,246 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            $("#addRow").on("click", function (event) {
+                event.preventDefault();
+                $("#tbl_pedido_lista > tbody").append('<tr data-number="' + ($("#tbl_pedido_lista > tbody").find("tr").length + 1) + '">' +
+                    '<td>' + ($("#tbl_pedido_lista > tbody").find("tr").length + 1) + '</td>' +
+                    '<td><div class="row"><div class="col-lg-4"><div class="input-group"><input type="text" name="PEDIDO_DETALLE.Id_Articulo" id="PEDIDO_DETALLE.Id_Articulo" class="form-control" value="" /><span class="input-group-btn"><button class="btn btn-default busca_articulo" type="button"><span class="glyphicon glyphicon-search"></span></button></span></div></div></td>' +
+                    '<td><span class="art_descripcion"></span></td>' +
+                    '<td><input type="number" name="PEDIDO_DETALLE.Cantidad" class="form-control Cantidad" /></td>' +
+                    '<td><span class="hidden art_precio"></span><span class="art_precio_formato"></span></td>' +
+                    '<td><input type="hidden" name="PEDIDO_DETALLE.Monto" class="form-control" readonly /><span class="art_monto"></span></td>' +
+                    '<td><a href="#" class="Eliminar">Borrar</a></td>' +
+                    '</tr>'
+                    );
+                $(".busca_articulo").on("click", function () {
+                    $row = $(this).parent().parent().parent().parent().parent().parent();
+                    $targetInput = $(this).parent().parent().parent().parent().parent().parent().find("INPUT[NAME='PEDIDO_DETALLE.Id_Articulo']");
+                    if ($targetInput.val() != "") {
+                        $row.find(".art_descripcion").text("");
+                        $row.find(".art_precio_formato").text("");
+                        $row.find(".art_precio").text("");
+                        $.ajax({
+                            url: "/Articulos/ConsultaJson/" + $targetInput.val(),
+                            method: "GET",
+                            success: function (articulo) {
+                                $row.find(".art_descripcion").text(articulo.Descripcion);
+                                $row.find(".art_precio").text(articulo.Precio);
+                                $row.find(".art_precio_formato").text(formatNumber.new(articulo.Precio.toFixed(2), "$"));
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(textStatus);
+                            }
+                        })
+                    }
+                    else {
+                        $("#responseRow").val($(this).parent().parent().parent().parent().parent().parent().attr("data-number"))
+                        $("#popupWindow").modal("show");
+                        $.ajax({
+                            url: "/Articulos/ConsultaArticulos",
+                            method: "GET",
+                            success: function (articulos) {
+                                $("#tbl_show_articulos > tbody").html("");
+                                $.each(articulos, function (i, o) {
+                                    $("#tbl_show_articulos > tbody").append('<tr>' +
+                                        '<td><a href="#" style="cursor:pointer;" class="select_articulo" data-value="' + o.Id + '">' + o.Id + '</a></td>' +
+                                        '<td>' + o.Descripcion + '</td>' +
+                                        '<td class="hidden">' + o.Precio + '</td>' +
+                                        '<td>' + formatNumber.new(o.Precio.toFixed(2), "$") + '</td>'
+                                        )
+                                });
+                                $(".select_articulo").on("click", function (event) {
+                                    event.preventDefault();
+                                    $targetInput.val($(this).attr("data-value"))
+                                    $("#tbl_pedido_lista > tbody").find("tr[data-number=" + $("#responseRow").val() + "]").find(".art_descripcion").text($(this).parent().parent().find("td:eq(1)").text())
+                                    $("#tbl_pedido_lista > tbody").find("tr[data-number=" + $("#responseRow").val() + "]").find(".art_precio").text($(this).parent().parent().find("td:eq(2)").text())
+                                    $("#tbl_pedido_lista > tbody").find("tr[data-number=" + $("#responseRow").val() + "]").find(".art_precio_formato").text(formatNumber.new(parseFloat($("#tbl_pedido_lista > tbody").find("tr[data-number=" + $("#responseRow").val() + "]").find(".art_precio").text()).toFixed(2), "$"))
+                                    $("#popupWindow").modal("hide");
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(textStatus);
+                            }
+                        })
+                    }
+                })
+                $(".Cantidad").change(function () {
+                    debugger;
+                    $row = $(this).parent().parent();
+                    if ($row.find(".art_precio").text() != "") {
+                        var CalTotal = parseFloat($row.find("INPUT[NAME='PEDIDO_DETALLE.Cantidad']").val()) * parseFloat($row.find(".art_precio").text());
+                        $row.find("INPUT[NAME='PEDIDO_DETALLE.Monto']").val(CalTotal)
+                        $row.find(".art_monto").text(formatNumber.new(CalTotal.toFixed(2), "$"))
+
+                    }
+                    var total = 0.0;
+                    $.each($("INPUT[NAME='PEDIDO_DETALLE.Monto']"), function (i, o) {
+                        total += parseFloat($(this).val());
+                        $("#total_label").text(formatNumber.new(total.toFixed(2), "$"))
+                        $("#Total").val(total);
+                    });
+                });
+                $(".Eliminar").on("click", function (event) {
+                    event.preventDefault();
+                    $(this).parent().parent().remove();
+                    var total = 0.0;
+                    $.each($("INPUT[NAME='PEDIDO_DETALLE.Monto']"), function (i, o) {
+                        total += parseFloat($(this).val());
+                        $("#total_label").text(formatNumber.new(total.toFixed(2), "$"))
+                        $("#Total").val(total);
+                    });
+                })
+            });
+        })
+        $("#form1").on("submit", function (event) {
+            event.preventDefault();
+            var result = $.serializeObject($("#form1").serializeArray(), "PEDIDO_DETALLE")
+            $.ajax({
+                url: "/Pedido/Create",
+                method: "POST",
+                data: JSON.stringify(result),
+                contentType: "application/json",
+                success: function (result) {
+                    if (result.Error) {
+                        alert(result.Mensaje);
+                    }
+                    else {
+                        window.location.href = "/Pedido"
+                    }
+                },
+                error: function (err, statusdesc, errr) {
+                    alert(statusdesc);
+                }
+            })
+        });
+        $.serializeObject = function (ArrayForm, PropertyArray) {
+            var objectData = {};
+            var PropertyArrays = PropertyArray.split('|');
+            $.each(ArrayForm, function () {
+                var value;
+                if (this.value != null)
+                    value = this.value;
+                else
+                    value = '';
+                var ArrayNames = this.name.split('.');
+                if (ArrayNames.length > 1) {
+                    objectData = Extract(ArrayNames, objectData, value);
+                }
+                else {
+                    if (objectData[this.name] != null) {
+                        if (!objectData[this.name].push) {
+                            objectData[this.name] = [objectData[this.name]];
+                        }
+                        objectData[this.name].push(value);
+                    }
+                    else {
+                        objectData[this.name] = value;
+                    }
+                }
+
+            });
+            $.each(PropertyArrays, function () {
+                if (objectData[this] != null && !objectData[this].push) {
+                    objectData[this] = [objectData[this]]
+                }
+            });
+            function Extract(ArrayNames, ObjectMain, value) {
+                var ExtraObject = {};
+                var BaseName = ArrayNames[0];
+                var IsSameObject = false;
+                ArrayNames.splice(0, 1);
+                if (ObjectMain[BaseName] != null) {
+                    if (ObjectMain[BaseName][ArrayNames[0]] != null && typeof (ObjectMain[BaseName][ArrayNames[0]]) != 'object') {
+                        IsSameObject = true;
+                        if (!ObjectMain[BaseName].push) {
+                            ObjectMain[BaseName] = [ObjectMain[BaseName]];
+                        }
+                    }
+                    else {
+                        if (!ObjectMain[BaseName].push) {
+                            ExtraObject = ObjectMain[BaseName];
+                        }
+                        else {
+                            ExtraObject = ObjectMain[BaseName][ObjectMain[BaseName].length - 1];
+                        }
+                    }
+                }
+                if (ArrayNames.length > 1) {
+                    Extract(ArrayNames, ExtraObject, value);
+                }
+                else {
+                    if (ExtraObject[ArrayNames[0]] != null) {
+                        if (!ExtraObject[ArrayNames[0]].push) {
+                            ExtraObject[ArrayNames[0]] = [ExtraObject[ArrayNames[0]]];
+                        }
+                        ExtraObject[ArrayNames[0]].push(value);
+                    }
+                    else if (ArrayNames.length - 1 > 1) {
+                        ArrayNames.splice(0, 1);
+                        ExtraObject[ArrayNames[0]] = Extract(ArrayNames, ExtraObject, value);
+                    }
+                    else {
+                        ExtraObject[ArrayNames[0]] = $.trim(value.replace("\n", "").replace("\r", ""));
+                    }
+                }
+
+                if (ObjectMain[BaseName] == null) {
+                    ObjectMain[BaseName] = ExtraObject
+                }
+                else if (IsSameObject) {
+                    ObjectMain[BaseName].push(ExtraObject);
+                }
+                return ObjectMain;
+            }
+            return objectData;
+        }
+        var formatNumber = {
+            separador: ",", // separador para los miles
+            sepDecimal: '.', // separador para los decimales
+            formatear: function (num) {
+                num += '';
+                var splitStr = num.split('.');
+                var splitLeft = splitStr[0];
+                var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+                var regx = /(\d+)(\d{3})/;
+                while (regx.test(splitLeft)) {
+                    splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+                }
+                return this.simbol + splitLeft + splitRight;
+            },
+            new: function (num, simbol) {
+                this.simbol = simbol || '';
+                return this.formatear(num);
+            }
+        }
+
+    </script>
 }
+<div class="modal fade" tabindex="-1" role="dialog" id="popupWindow">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Árticulos</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="responseRow" />
+                <table class="table table-responsive" id="tbl_show_articulos">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

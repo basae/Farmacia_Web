@@ -19,7 +19,7 @@ namespace Farmacia_Web.Core.Clientes
                 {
                     _item.Estatus = true;
                     bd.CLIENTE.Add(_item);
-
+                    bd.SaveChanges();
 
                 }
             }

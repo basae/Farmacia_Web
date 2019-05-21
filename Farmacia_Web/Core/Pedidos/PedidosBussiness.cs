@@ -16,7 +16,7 @@ namespace Farmacia_Web.Core.Pedidos
             {
                 using (var db = new FarmaciaEntities())
                 {
-                    respuesta.Lista_Resultado = db.PEDIDO.ToList();
+                    respuesta.Lista_Resultado = db.PEDIDO.Include("CLIENTE").ToList();
                 }
             }
             catch(Exception ex)
@@ -74,10 +74,17 @@ namespace Farmacia_Web.Core.Pedidos
             RespuestaServicio<PEDIDO> respuesta = new RespuestaServicio<PEDIDO>();
             try
             {
+                if (_item.Id_Cliente < 1)
+                    throw new Exception("Cliente Invalido");                
+                if (_item.PEDIDO_DETALLE.Count() < 1)
+                    throw new Exception("Almenos debe contener un articulo");
                 using (var bd = new FarmaciaEntities())
                 {
-                    _item.Estatus = true;                    
+                    _item.Estatus = true;
+                    _item.Fecha_Pedido = DateTime.Now;
+                    _item.Fecha_Creacion = DateTime.Now;
                     bd.PEDIDO.Add(_item);
+                    bd.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -98,7 +105,7 @@ namespace Farmacia_Web.Core.Pedidos
 
                 using (var bd = new FarmaciaEntities())
                 {
-
+                    _item.Fecha_Modificacion = DateTime.Now;
                     bd.Entry(_item).State = System.Data.Entity.EntityState.Modified;
                     bd.SaveChanges();
                 }

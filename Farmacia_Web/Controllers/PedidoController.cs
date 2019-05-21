@@ -13,13 +13,20 @@ namespace Farmacia_Web.Controllers
         // GET: Pedido
         public ActionResult Index()
         {
-            var Pedidos = new PedidosBussiness().Consulta();
-            return View(Pedidos.Lista_Resultado);
+            var Pedidos = new PedidosBussiness().Consulta().Lista_Resultado.ToList();
+            return View(Pedidos);
         }
         public ActionResult Create()
         {
-            ViewBag.Clientes = new ClientesBussiness().Consulta().Lista_Resultado.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = string.Join(" ", x.Nombre, x.APaterno, x.AMaterno) });
+            ViewBag.Clientes = new ClientesBussiness().Consulta().Lista_Resultado.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = string.Format("{0}-{1}", x.Id.ToString(), string.Join(" ", x.Nombre, x.APaterno, x.AMaterno)) });
             return View();
+        }
+        [HttpPost]
+        public JsonResult Create(PEDIDO _Pedido)
+        {
+            var resultrequest = new PedidosBussiness().Guardar(_Pedido);
+
+            return Json(resultrequest, JsonRequestBehavior.AllowGet);
         }
     }
 }
